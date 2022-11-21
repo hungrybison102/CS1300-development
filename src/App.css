@@ -1,7 +1,25 @@
 .App {
   text-align: center;
 }
+.bakerylist {
+  display:flex;
+  justify-content:left;
+  flex-wrap: wrap;
 
+}.break {
+  flex-basis: 100%;
+  height: 0;
+}
+.description {
+  text-align:left;
+  width:70%
+}
+h1 {
+  font-size:50px
+}
+.bakeryitem {
+  width:33vw
+}
 .App-logo {
   height: 40vmin;
   pointer-events: none;

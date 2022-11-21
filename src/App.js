@@ -1,25 +1,131 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from './logo.svg'
+import bakeryData from './assets/bakery-data.json'
+import BakeryItem from './BakeryItem'
+import { useState } from 'react'
+import Button from '@mui/material/Button'
+import {
+  Grid,
+  ButtonGroup,
+  Checkbox,
+  FormGroup,
+  FormControlLabel
+} from '@mui/material'
+import { ArrowDownward, ArrowUpward, Clear } from '@mui/icons-material'
 
-function App() {
+function App () {
+  const [cart, changeCart] = useState([])
+  const [total, changeTotal] = useState(0)
+  const [sortSetting, changeSortSetting] = useState(null)
+  const [veganSetting, changeVeganSetting] = useState(0)
+  const [nutSetting, changeNutSetting] = useState(0)
+
+  const handleDelete = item => {
+    var temp = cart
+    var index = temp.indexOf(item)
+    console.log(index)
+    changeCart(cart.filter((_, i) => i !== index))
+
+    changeTotal(total - item.price)
+  }
+  const handleClick = item => {
+    changeCart([...cart, item])
+    changeTotal(total + item.price)
+  }
+  const handleSort = () => {
+    if (sortSetting) {
+      changeSortSetting(false)
+      bakeryData = bakeryData.sort((a, b) => a.price - b.price)
+    } else {
+      changeSortSetting(true)
+      bakeryData = bakeryData.sort((a, b) => b.price - a.price)
+    }
+  }
+  const handleSettingsChange = (bool, i) => {
+    if (i === 1) {
+      changeVeganSetting(bool)
+    } else if (i === 2) {
+      changeNutSetting(bool)
+    }
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <h1>My Bakery</h1>
+      <h2>click an item to add it to the cart!</h2>
+      <br></br>
+      <Grid container spacing={1}>
+        <Grid item sm={3}>
+          <ButtonGroup
+            variant='contained'
+            aria-label='outlined primary button group'
+          >
+            <Button onClick={handleSort}>
+              Sort by price {sortSetting && <ArrowDownward></ArrowDownward>}
+              {!sortSetting && sortSetting != null && (
+                <ArrowUpward></ArrowUpward>
+              )}
+            </Button>
+          </ButtonGroup>
+          <FormGroup style={{ alignItems: 'center' }}>
+            <br></br>
+            <h2>Filter by</h2>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  onChange={e => handleSettingsChange(e.target.checked, 1)}
+                />
+              }
+              label='vegan items'
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  onChange={e => handleSettingsChange(e.target.checked, 2)}
+                />
+              }
+              label='nut-free items'
+            />
+          </FormGroup>
+        </Grid>
+        <Grid item sm={9}>
+          <div className='bakerylist'>
+            {bakeryData.map(
+              (
+                item,
+                index // TODO: map bakeryData to BakeryItem components
+              ) => {
+                return (!veganSetting && !nutSetting) ||
+                  (veganSetting && nutSetting && item.vegan && item.nutfree) ||
+                  (veganSetting && item.vegan && !nutSetting) ||
+                  (nutSetting && item.nutfree && !veganSetting) ? (
+                  <span className='bakeryitem'>
+                    <Button variant="outlined" style={{height:"30vh"}}onClick={() => handleClick(item)}>
+                      <BakeryItem info={item} />
+                    </Button>
+                  </span>
+                ) : (
+                  <></>
+                )
+              }
+            )}
+          </div>
+        </Grid>
+      </Grid>
+      <h2>Cart</h2>
+      total: {parseFloat(total.toFixed(2))}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <ul style={{ textAlign: 'left' }}>
+          {cart.map((item, index) => (
+            <li>
+              {' '}
+              <Button onClick={() => handleDelete(item)}>
+                {item.name} <Clear></Clear>
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
