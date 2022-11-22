@@ -12,10 +12,11 @@ import {
 } from '@mui/material'
 import { ArrowDownward, ArrowUpward, Clear } from '@mui/icons-material'
 
+bakeryData = bakeryData.sort((a, b) => b.price - a.price)
 function App () {
   const [cart, changeCart] = useState([])
   const [total, changeTotal] = useState(0)
-  const [sortSetting, changeSortSetting] = useState(null)
+  const [sortSetting, changeSortSetting] = useState(true)
   const [veganSetting, changeVeganSetting] = useState(0)
   const [nutSetting, changeNutSetting] = useState(0)
 
@@ -85,6 +86,20 @@ function App () {
               label='nut-free items'
             />
           </FormGroup>
+      <h2>Cart</h2>
+      total: ${parseFloat(total.toFixed(2))}
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <ul style={{ textAlign: 'left', listStyleType:"none" }}>
+          {cart.map((item, index) => (
+            <li>
+              {' '}
+              <Button onClick={() => handleDelete(item)}>
+                {item.name} <Clear></Clear>
+              </Button>
+            </li>
+          ))}
+        </ul>
+      </div>
         </Grid>
         <Grid item sm={9}>
           <div className='bakerylist'>
@@ -98,7 +113,7 @@ function App () {
                   (veganSetting && item.vegan && !nutSetting) ||
                   (nutSetting && item.nutfree && !veganSetting) ? (
                   <span className='bakeryitem'>
-                    <Button variant="outlined" style={{height:"30vh"}}onClick={() => handleClick(item)}>
+                    <Button variant="outlined" style={{height:"40vh"}} onClick={() => handleClick(item)}>
                       <BakeryItem info={item} />
                     </Button>
                   </span>
@@ -110,20 +125,6 @@ function App () {
           </div>
         </Grid>
       </Grid>
-      <h2>Cart</h2>
-      total: {parseFloat(total.toFixed(2))}
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <ul style={{ textAlign: 'left' }}>
-          {cart.map((item, index) => (
-            <li>
-              {' '}
-              <Button onClick={() => handleDelete(item)}>
-                {item.name} <Clear></Clear>
-              </Button>
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
   )
 }
