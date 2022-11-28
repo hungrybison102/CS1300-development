@@ -20,10 +20,7 @@ function App () {
   const [veganSetting, changeVeganSetting] = useState(0)
   const [nutSetting, changeNutSetting] = useState(0)
 
-  const handleDelete = item => {
-    var temp = cart
-    var index = temp.indexOf(item)
-    console.log(index)
+  const handleDelete = (item, index) => {
     changeCart(cart.filter((_, i) => i !== index))
 
     changeTotal(total - item.price)
@@ -93,7 +90,7 @@ function App () {
           {cart.map((item, index) => (
             <li>
               {' '}
-              <Button onClick={() => handleDelete(item)}>
+              <Button onClick={() => handleDelete(item, index)}>
                 {item.name} <Clear></Clear>
               </Button>
             </li>
