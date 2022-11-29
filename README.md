@@ -13,12 +13,12 @@ There is a clear hierarchy and separation between the menu and the controls/aggr
 
 ### Organization of Components
 
-Most things are in App.js. App.js maps the bakery data to BakeryItems, which displays the information of the item using passed-in props. App.js uses state variables for the cart, the total, and the settings.
+Most things are in App.js. App.js maps the bakery data to BakeryItems, which displays the information of the item using passed-in props. It also displays the Cart, which displays each item of the cart as a clickable item. App.js uses state variables for the cart list, the total, and the settings.
 
 ### How Data is Passed Down Through Components
 
-App.js passes in the bakery item data into the BakeryItem component.
+App.js passes in the bakery item data into the BakeryItem component. The delete handle function and cart list are also passed as props into the Cart component.
 
 ### How the User Triggers State Changes
 
-The user clicks on items to change the state of the cart, or uses the filter/sorting features to change the states of the settings.
+The user clicks on items to change the state of the cart, or uses the filter/sorting features to change the states of the settings and bakery list.
