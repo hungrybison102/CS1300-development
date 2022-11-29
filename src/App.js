@@ -3,6 +3,7 @@ import bakeryData from './assets/bakery-data.json'
 import BakeryItem from './BakeryItem'
 import { useState } from 'react'
 import Button from '@mui/material/Button'
+import Cart from './Cart'
 import {
   Grid,
   ButtonGroup,
@@ -14,35 +15,36 @@ import { ArrowDownward, ArrowUpward, Clear } from '@mui/icons-material'
 
 bakeryData = bakeryData.sort((a, b) => b.price - a.price)
 function App () {
-  const [cart, changeCart] = useState([])
-  const [total, changeTotal] = useState(0)
-  const [sortSetting, changeSortSetting] = useState(true)
-  const [veganSetting, changeVeganSetting] = useState(0)
-  const [nutSetting, changeNutSetting] = useState(0)
+  const [cart, setCart] = useState([])
+  const [total, setTotal] = useState(0)
+  const [sortSetting, setSortSetting] = useState(true)
+  const [veganSetting, setVeganSetting] = useState(0)
+  const [nutSetting, setNutSetting] = useState(0)
+  const [bakeryList, setBakeryList] = useState(bakeryData)
 
-  const handleDelete = (item, index) => {
-    changeCart(cart.filter((_, i) => i !== index))
-
-    changeTotal(total - item.price)
-  }
   const handleClick = item => {
-    changeCart([...cart, item])
-    changeTotal(total + item.price)
+    setCart([...cart, item])
+    setTotal(total + item.price)
   }
   const handleSort = () => {
     if (sortSetting) {
-      changeSortSetting(false)
-      bakeryData = bakeryData.sort((a, b) => a.price - b.price)
+      setSortSetting(false)
+      setBakeryList(bakeryList.sort((a, b) => a.price - b.price))
     } else {
-      changeSortSetting(true)
-      bakeryData = bakeryData.sort((a, b) => b.price - a.price)
+      setSortSetting(true)
+      setBakeryList(bakeryList.sort((a, b) => b.price - a.price))
     }
+  }
+  const handleDelete = (item, index) => {
+    setCart(cart.filter((_, i) => i !== index))
+
+    setTotal(total - item.price)
   }
   const handleSettingsChange = (bool, i) => {
     if (i === 1) {
-      changeVeganSetting(bool)
+      setVeganSetting(bool)
     } else if (i === 2) {
-      changeNutSetting(bool)
+      setNutSetting(bool)
     }
   }
   return (
@@ -83,42 +85,40 @@ function App () {
               label='nut-free items'
             />
           </FormGroup>
-      <h2>Cart</h2>
-      total: ${parseFloat(total.toFixed(2))}
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <ul style={{ textAlign: 'left', listStyleType:"none" }}>
-          {cart.map((item, index) => (
-            <li>
-              {' '}
-              <Button onClick={() => handleDelete(item, index)}>
-                {item.name} <Clear></Clear>
-              </Button>
-            </li>
-          ))}
-        </ul>
-      </div>
+          <h2>Cart</h2>
+          total: ${parseFloat(total.toFixed(2))}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <ul style={{ textAlign: 'left', listStyleType: 'none' }}>
+              <Cart
+                info={{
+                  cart: cart,
+                  deleteFunction: handleDelete
+                }}
+              ></Cart>
+            </ul>
+          </div>
         </Grid>
         <Grid item sm={9}>
           <div className='bakerylist'>
-            {bakeryData.map(
-              (
-                item,
-                index // TODO: map bakeryData to BakeryItem components
-              ) => {
-                return (!veganSetting && !nutSetting) ||
+            {bakeryList
+              .filter(
+                item =>
+                  (!veganSetting && !nutSetting) ||
                   (veganSetting && nutSetting && item.vegan && item.nutfree) ||
                   (veganSetting && item.vegan && !nutSetting) ||
-                  (nutSetting && item.nutfree && !veganSetting) ? (
-                  <span className='bakeryitem'>
-                    <Button variant="outlined" style={{height:"40vh"}} onClick={() => handleClick(item)}>
-                      <BakeryItem info={item} />
-                    </Button>
-                  </span>
-                ) : (
-                  <></>
-                )
-              }
-            )}
+                  (nutSetting && item.nutfree && !veganSetting)
+              )
+              .map(item => (
+                <span className='bakeryitem'>
+                  <Button
+                    variant='outlined'
+                    style={{ height: '40vh' }}
+                    onClick={() => handleClick(item)}
+                  >
+                    <BakeryItem info={item} />
+                  </Button>
+                </span>
+              ))}
           </div>
         </Grid>
       </Grid>

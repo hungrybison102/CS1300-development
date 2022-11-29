@@ -4,12 +4,11 @@ import './App.css'
 class BakeryItem extends Component {
   constructor (props) {
     super(props)
-    console.log(props)
   }
   render () {
     return (
       <div>
-        <img src={this.props.info.image} style={{ width: '30%' }}></img>
+      <img src={this.props.info.image} style={{ width: '30%', }}></img>
         <div
           style={{
             display: 'flex',
